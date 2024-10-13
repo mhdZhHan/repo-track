@@ -1,8 +1,14 @@
-import { Search as SearchIcon} from "lucide-react"
+import { Search as SearchIcon } from "lucide-react"
+import { useState } from "react"
 
-const Search = () => {
+const Search = ({ onSearch }) => {
+	const [username, setUsername] = useState("")
+
 	return (
-		<form className="max-w-xl mx-auto p-2">
+		<form
+			className="max-w-xl mx-auto p-2"
+			onSubmit={(evt) => onSearch(evt, username)}
+		>
 			<label
 				htmlFor="default-search"
 				className="mb-2 text-sm font-medium text-gray-900 sr-only"
@@ -19,6 +25,8 @@ const Search = () => {
 					className="block w-full p-4 ps-10 text-sm rounded-lg bg-glass focus:ring-blue-500 focus:border-blue-500 bg-transparent focus:bg-transparent "
 					placeholder="i.e. johndoe"
 					required
+					value={username}
+					onChange={(evt) => setUsername(evt.target.value)}
 				/>
 				<button
 					type="submit"

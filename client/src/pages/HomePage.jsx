@@ -14,27 +14,57 @@ const HomePage = () => {
 
 	const [sortType, setSortType] = useState("fork")
 
-	const getUserProfileAndRepos = useCallback(async () => {
+	const getUserProfileAndRepos = useCallback(
+		async (username = "mhdZhHan") => {
+			setLoading(true)
+			try {
+				const userResponse = await fetch(
+					`https://api.github.com/users/${username}`
+				)
+				const userProfile = await userResponse.json()
+				setUserProfile(userProfile)
+
+				const userRepos = await fetch(userProfile.repos_url)
+				const repos = await userRepos.json()
+				setRepos(repos)
+
+				return { userProfile, repos }
+			} catch (error) {
+				toast.error(error.message || "Something went wrong.")
+			} finally {
+				setLoading(false)
+			}
+		},
+		[]
+	)
+
+	const onSearch = async (evt, username) => {
+		evt.preventDefault()
+
 		setLoading(true)
-		try {
-			const userResponse = await fetch(
-				`https://api.github.com/users/mhdZhHan`
-			)
-			const userProfile = await userResponse.json()
-			setUserProfile(userProfile)
+		setUserProfile(null)
+		setRepos([])
 
-			const userRepos = await fetch(userProfile.repos_url)
-			const repos = await userRepos.json()
-			setRepos(repos)
+		const { userProfile, repos } = await getUserProfileAndRepos(username)
+		setUserProfile(userProfile)
+		setRepos(repos)
 
-			console.log(userProfile)
-			console.log(repos)
-		} catch (error) {
-			toast.error(error.message || "Something went wrong.")
-		} finally {
-			setLoading(false)
+		setLoading(false)
+	}
+
+	const onSort = (sortType) => {
+		if (sortType === "recent") {
+			repos.sort(
+				(a, b) => new Date(b.created_at) - new Date(a.created_at)
+			) //descending, recent first
+		} else if (sortType === "stars") {
+			repos.sort((a, b) => b.stargazers_count - a.stargazers_count) //descending, most stars first
+		} else if (sortType === "forks") {
+			repos.sort((a, b) => b.forks_count - a.forks_count) //descending, most forks first
 		}
-	}, [])
+		setSortType(sortType)
+		setRepos([...repos])
+	}
 
 	useEffect(() => {
 		getUserProfileAndRepos()
@@ -42,14 +72,16 @@ const HomePage = () => {
 
 	return (
 		<div className="m-4">
-			<Search />
-			<SortRepos />
+			<Search onSearch={onSearch} />
+			{repos.length > 0 && (
+				<SortRepos sortType={sortType} onSort={onSort} />
+			)}
 			<div className="flex gap-4 flex-col lg:flex-row justify-center items-start">
 				{userProfile && !loading && (
 					<ProfileInfo userProfile={userProfile} />
 				)}
 
-				{repos.length > 0 && !loading && <Repos repos={repos} />}
+				{!loading && <Repos repos={repos} />}
 
 				{loading && <Spinner />}
 			</div>
