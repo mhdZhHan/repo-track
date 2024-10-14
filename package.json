@@ -4,7 +4,9 @@
 	"main": "server/server.js",
 	"type": "module",
 	"scripts": {
-		"dev": "nodemon server/server.js"
+		"dev": "NODE_ENV=production nodemon server/server.js",
+		"start": "NODE_ENV=production node server/index.js",
+		"build": "npm install && npm install --prefix client && npm run build --prefix client"
 	},
 	"author": "Mohammed <dev.mohammedsh@gmail.com>",
 	"license": "MIT",
