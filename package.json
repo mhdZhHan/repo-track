@@ -5,10 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "nodemon server/server.js",
-		"start": "node server/index.js",
+		"start": "node server/server.js",
 		"build": "npm install && npm install --prefix client && npm run build --prefix client"
 	},
-	"author": "Mohammed <dev.mohammedsh@gmail.com>",
+	"author": "Mohammed",
 	"license": "MIT",
 	"dependencies": {
 		"cors": "^2.8.5",

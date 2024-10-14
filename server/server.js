@@ -31,10 +31,6 @@ app.use(passport.session())
 
 // app.use(cors())
 
-app.get("/", (req, res) => {
-	res.send("Hello, World!")
-})
-
 // routes
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
