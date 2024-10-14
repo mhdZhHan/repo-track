@@ -18,14 +18,10 @@ const HomePage = () => {
 		async (username = "mhdZhHan") => {
 			setLoading(true)
 			try {
-				const userResponse = await fetch(
-					`https://api.github.com/users/${username}`
-				)
-				const userProfile = await userResponse.json()
-				setUserProfile(userProfile)
+				const response = await fetch(`api/users/profile/${username}`)
+				const { repos, userProfile } = await response.json()
 
-				const userRepos = await fetch(userProfile.repos_url)
-				const repos = await userRepos.json()
+				setUserProfile(userProfile)
 
 				repos.sort(
 					(a, b) => new Date(b.created_at) - new Date(a.created_at)
